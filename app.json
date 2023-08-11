@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "SuperApp",
-    "slug": "SuperApp",
+    "slug": "supperapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,7 +21,10 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +36,12 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "25bde435-2e76-4f0d-b4c7-9c8ee97cd539"
+      }
+    },
+    "owner": "ndhphuc"
   }
 }
