@@ -11,10 +11,18 @@ import SendMessage from "../views/Message/SendMessage";
 
 const Stack = createNativeStackNavigator();
 
+const getIsLogin = () => {
+  // custom logic
+  return true;
+};
+
 export default function Navigation() {
+  const isLogin = getIsLogin();
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={ScreenName.bottomtab}>
+      <Stack.Navigator
+        initialRouteName={isLogin ? ScreenName.bottomtab : ScreenName.login}
+      >
         <Stack.Screen
           options={{ headerShown: false }}
           component={LoginView}
