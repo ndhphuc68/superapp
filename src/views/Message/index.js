@@ -9,15 +9,25 @@ import {
 import React from "react";
 import { HStack, VStack, Avatar, Flex } from "native-base";
 import { Colors } from "../../theme/colors";
+import { useNavigation } from "@react-navigation/core";
+import { ScreenName } from "../../routes/modules/ScreenName";
 
 const { width, height } = Dimensions.get("window");
 
 export default function Message() {
   const list = [1, 2, 3, 4, 5, 6];
 
+  const navigation = useNavigation();
+
   const renderItemMessage = () => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(ScreenName.sendMessage, {
+            name: "Nguyễn Đặng Hoàng Phúc",
+          })
+        }
+      >
         <HStack space={3} marginBottom={6} alignItems={"center"}>
           <Avatar
             size="lg"

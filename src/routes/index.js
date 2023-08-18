@@ -7,13 +7,22 @@ import { ScreenName } from "./modules/ScreenName";
 import Tabbar from "./modules/BottomTabNavigator";
 import EditProfile from "../views/Profile/EditProfile";
 import Message from "../views/Message";
+import SendMessage from "../views/Message/SendMessage";
 
 const Stack = createNativeStackNavigator();
 
+const getIsLogin = () => {
+  // custom logic
+  return true;
+};
+
 export default function Navigation() {
+  const isLogin = getIsLogin();
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={ScreenName.bottomtab}>
+      <Stack.Navigator
+        initialRouteName={isLogin ? ScreenName.bottomtab : ScreenName.login}
+      >
         <Stack.Screen
           options={{ headerShown: false }}
           component={LoginView}
@@ -33,6 +42,16 @@ export default function Navigation() {
           options={{ headerShown: true }}
           component={Message}
           name={ScreenName.message}
+        />
+        <Stack.Screen
+          options={({ route }) => ({
+            title: route.params.name,
+            headerShown: true,
+            headerTitleAlign: "center",
+            headerBackTitleVisible: false,
+          })}
+          component={SendMessage}
+          name={ScreenName.sendMessage}
         />
       </Stack.Navigator>
     </NavigationContainer>
