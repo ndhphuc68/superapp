@@ -2,6 +2,7 @@
   "expo": {
     "name": "SuperApp",
     "slug": "supperapp",
+    "private": "plugins",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,7 +25,8 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.ndhphuc.supperapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,11 +39,17 @@
         }
       ]
     ],
+    "owner": "ndhphuc",
     "extra": {
       "eas": {
-        "projectId": "25bde435-2e76-4f0d-b4c7-9c8ee97cd539"
+        "projectId": "07348e17-d1b5-4679-8190-b33488e77b44"
       }
     },
-    "owner": "ndhphuc"
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/07348e17-d1b5-4679-8190-b33488e77b44"
+    }
   }
 }
