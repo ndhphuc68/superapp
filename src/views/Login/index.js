@@ -9,6 +9,7 @@ import auth, { authV1 } from "../../redux/modules/auth";
 import { useNavigation } from "@react-navigation/core";
 import { ScreenName } from "../../routes/modules/ScreenName";
 import messaging from "@react-native-firebase/messaging";
+import { loginApi } from "../../helper/modules/auth";
 
 export default function LoginView() {
   const navigation = useNavigation();
@@ -19,22 +20,25 @@ export default function LoginView() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    messaging()
-      .getToken()
-      .then((token) => {
-        console.log(token);
-      });
-  }, []);
-
-  const handleLogin = () => {
+  const handleLogin = async () => {
     Keyboard.dismiss();
     setIsLoading(false);
     if (username && password) {
-      dispatch(authV1.actions.setAuth(true));
-      navigation.navigate(ScreenName.bottomtab);
+      const tokenFM = await messaging().getToken();
+      console.log(tokenFM);
     }
   };
+
+  const { mutate: loginAction } = useMutation({
+    mutationFn: (data) => loginApi(data),
+    onSuccess: async (res) => {
+      // queryClient.setQueryData("pokemon", (old) => [...old, newPokemon]);
+      console.log(res);
+      dispatch(setAuth(true));
+      navigation.navigate(ScreenName.bottomtab);
+    },
+    onError: (error, variables, context) => {},
+  });
 
   return (
     <View style={styles.container}>
