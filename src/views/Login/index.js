@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View, Keyboard } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Images } from "../../theme/image";
 import { VStack, Input, Icon, Pressable, Button } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import auth, { authV1 } from "../../redux/modules/auth";
 import { useNavigation } from "@react-navigation/core";
 import { ScreenName } from "../../routes/modules/ScreenName";
+import messaging from "@react-native-firebase/messaging";
 
 export default function LoginView() {
   const navigation = useNavigation();
@@ -17,6 +18,14 @@ export default function LoginView() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    messaging()
+      .getToken()
+      .then((token) => {
+        console.log(token);
+      });
+  }, []);
 
   const handleLogin = () => {
     Keyboard.dismiss();

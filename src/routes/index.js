@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 
 const getIsLogin = () => {
   // custom logic
-  return true;
+  return false;
 };
 
 export default function Navigation() {
