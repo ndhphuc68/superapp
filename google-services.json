@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "643198927555",
+    "project_id": "supper-app-ca076",
+    "storage_bucket": "supper-app-ca076.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643198927555:android:1cb874956e57a3e3a51876",
+        "android_client_info": {
+          "package_name": "com.ndhphuc.supperapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643198927555-6nmtml37vs6r1s1j1gqv851vr8u89i85.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnYzU8QJZW4-uGkTJHy6G7SjCe9czdkBI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643198927555-6nmtml37vs6r1s1j1gqv851vr8u89i85.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
