@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import redux from "./src/redux";
 import { NativeBaseProvider } from "native-base";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
 
 const queryClient = new QueryClient();
 
@@ -12,6 +13,7 @@ export default function App() {
       <NativeBaseProvider>
         <QueryClientProvider client={queryClient}>
           <Navigation />
+          <Toast />
         </QueryClientProvider>
       </NativeBaseProvider>
     </Provider>

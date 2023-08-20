@@ -5,11 +5,14 @@ import { VStack, Input, Icon, Pressable, Button } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "../../theme/colors";
 import { useDispatch } from "react-redux";
-import auth, { authV1 } from "../../redux/modules/auth";
+import { setAuth, setUserNameLogin } from "../../redux/modules/auth";
 import { useNavigation } from "@react-navigation/core";
 import { ScreenName } from "../../routes/modules/ScreenName";
 import messaging from "@react-native-firebase/messaging";
 import { loginApi } from "../../helper/modules/auth";
+import { useMutation } from "@tanstack/react-query";
+import { saveToken } from "../../utils/storage";
+import { showToastError } from "../../utils/toast";
 
 export default function LoginView() {
   const navigation = useNavigation();
@@ -25,19 +28,30 @@ export default function LoginView() {
     setIsLoading(false);
     if (username && password) {
       const tokenFM = await messaging().getToken();
-      console.log(tokenFM);
+      loginAction({ username, password, token: tokenFM });
+    } else {
+      if (!username) {
+        showToastError(data.message);
+      }
     }
   };
 
   const { mutate: loginAction } = useMutation({
     mutationFn: (data) => loginApi(data),
     onSuccess: async (res) => {
-      // queryClient.setQueryData("pokemon", (old) => [...old, newPokemon]);
-      console.log(res);
-      dispatch(setAuth(true));
-      navigation.navigate(ScreenName.bottomtab);
+      const { data } = res;
+      if (data.success) {
+        saveToken(data.data.token);
+        dispatch(setAuth(true));
+        dispatch(setUserNameLogin(data.data.username));
+        navigation.navigate(ScreenName.bottomtab);
+      } else {
+        showToastError(data.message);
+      }
     },
-    onError: (error, variables, context) => {},
+    onError: (error) => {
+      console.log(error);
+    },
   });
 
   return (
