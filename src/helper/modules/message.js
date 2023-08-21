@@ -19,3 +19,12 @@ export const getListMessage = async (data) => {
     return false;
   }
 };
+
+export const sendMessage = async (data) => {
+  try {
+    const res = await axiosInstance.post(`/message/create`, data);
+    return res.data;
+  } catch (error) {
+    return false;
+  }
+};

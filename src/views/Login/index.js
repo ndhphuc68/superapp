@@ -54,7 +54,6 @@ export default function LoginView() {
           .catch((e) => {
             console.log(e);
           });
-        console.log(data.data.token);
         await saveToken(data.data.token);
         await saveUsername(username);
         dispatch(setAuth(true));

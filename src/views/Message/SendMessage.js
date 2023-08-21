@@ -1,8 +1,15 @@
-import { View, Text, StyleSheet, Dimensions, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { Avatar, HStack, Input, VStack } from "native-base";
 import { Feather } from "@expo/vector-icons";
-import { getListMessage } from "../../helper/modules/message";
+import { getListMessage, sendMessage } from "../../helper/modules/message";
 import { useNavigation } from "@react-navigation/core";
 import { getUsername } from "../../utils/storage";
 import { BASE_URL_IMAGE } from "../../constants";
@@ -15,6 +22,7 @@ export default function SendMessage({ route }) {
   const { name, toUser, image } = route.params;
 
   const [listMessage, setListMessage] = useState(null);
+  const [messageSend, setMessageSend] = useState("");
 
   useEffect(() => {
     handleGetListMessage();
@@ -29,6 +37,22 @@ export default function SendMessage({ route }) {
     });
   };
 
+  const handleSendMessage = async () => {
+    if (messageSend) {
+      const username = await getUsername();
+      await sendMessage({
+        username,
+        toUser: toUser,
+        message: messageSend,
+      }).then((res) => {
+        if (res.success) {
+          handleGetListMessage();
+          setMessageSend("");
+        }
+      });
+    }
+  };
+
   const compareTimes = (time1, time2) => {
     const difference = Math.abs(new Date(time1) - new Date(time2));
     const minutes = Math.floor(difference / 60000);
@@ -38,7 +62,7 @@ export default function SendMessage({ route }) {
   const renderMessageMe = (item) => {
     const { message } = item;
     return (
-      <HStack marginBottom={5} alignItems={"flex-end"} space={2}>
+      <HStack marginBottom={3} alignItems={"flex-end"} space={2}>
         <Avatar
           size="sm"
           bg="green.500"
@@ -63,7 +87,7 @@ export default function SendMessage({ route }) {
     const { message, createdAt } = item;
     return (
       <HStack
-        marginBottom={5}
+        marginBottom={3}
         justifyContent={"flex-start"}
         flexDirection={"row-reverse"}
         alignItems={"flex-end"}
@@ -159,8 +183,16 @@ export default function SendMessage({ route }) {
           alignItems={"center"}
           justifyContent={"center"}
         >
-          <Input backgroundColor={"white"} fontSize={18} w={"3/4"} />
-          <Feather name="send" size={32} color="black" />
+          <Input
+            value={messageSend}
+            onChangeText={setMessageSend}
+            backgroundColor={"white"}
+            fontSize={18}
+            w={"3/4"}
+          />
+          <TouchableOpacity onPress={() => handleSendMessage()}>
+            <Feather name="send" size={32} color="black" />
+          </TouchableOpacity>
         </HStack>
       </View>
     </View>
