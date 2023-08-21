@@ -10,13 +10,17 @@ import { useNavigation } from "@react-navigation/core";
 import { ScreenName } from "../../routes/modules/ScreenName";
 import messaging from "@react-native-firebase/messaging";
 import { loginApi } from "../../helper/modules/auth";
-import { useMutation } from "@tanstack/react-query";
-import { saveToken } from "../../utils/storage";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { saveToken, saveUsername } from "../../utils/storage";
 import { showToastError } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
+import { getInfoApi } from "../../helper/modules/user";
+import { setInfoUser } from "../../redux/modules/user";
 
 export default function LoginView() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [show, setShow] = useState();
   const [username, setUsername] = useState("");
@@ -41,7 +45,18 @@ export default function LoginView() {
     onSuccess: async (res) => {
       const { data } = res;
       if (data.success) {
-        saveToken(data.data.token);
+        await getInfoApi(username)
+          .then((res) => {
+            if (res.success) {
+              dispatch(setInfoUser(res.data));
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+        console.log(data.data.token);
+        await saveToken(data.data.token);
+        await saveUsername(username);
         dispatch(setAuth(true));
         dispatch(setUserNameLogin(data.data.username));
         navigation.navigate(ScreenName.bottomtab);
@@ -66,7 +81,7 @@ export default function LoginView() {
           focusOutlineColor={Colors.neutral60}
           size="xl"
           variant="underlined"
-          placeholder="Username"
+          placeholder={t("username")}
           placeholderTextColor={Colors.black}
           style={{ fontWeight: "bold" }}
           value={username}
@@ -80,7 +95,7 @@ export default function LoginView() {
           focusOutlineColor={Colors.neutral60}
           size="xl"
           variant="underlined"
-          placeholder="Password"
+          placeholder={t("password")}
           type={show ? "text" : "password"}
           InputRightElement={
             <Pressable onPress={() => setShow(!show)}>
@@ -106,7 +121,7 @@ export default function LoginView() {
           <Text
             style={{ fontWeight: "bold", color: Colors.white, fontSize: 18 }}
           >
-            Login
+            {t("login")}
           </Text>
         </Button>
       </VStack>

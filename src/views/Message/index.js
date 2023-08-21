@@ -6,25 +6,51 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { HStack, VStack, Avatar, Flex } from "native-base";
 import { Colors } from "../../theme/colors";
 import { useNavigation } from "@react-navigation/core";
 import { ScreenName } from "../../routes/modules/ScreenName";
+import { useDispatch, useSelector } from "react-redux";
+import { BASE_URL_IMAGE } from "../../constants";
+import { getListUserMessage } from "../../helper/modules/message";
+import { getUsername } from "../../utils/storage";
+import { setListUserMessage } from "../../redux/modules/message";
 
 const { width, height } = Dimensions.get("window");
 
 export default function Message() {
-  const list = [1, 2, 3, 4, 5, 6];
-
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  const renderItemMessage = () => {
+  const listUserMessage = useSelector((state) => state.message.listUserMessage);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefreshUserMessage = async () => {
+    setRefreshing(true);
+    const useName = await getUsername();
+    await getListUserMessage(useName)
+      .then((res) => {
+        if (res.success) {
+          dispatch(setListUserMessage(res.data));
+          setRefreshing(false);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const renderItemMessage = (item) => {
+    const { firstName, lastName, image, username, lastMessage } = item;
+
     return (
       <TouchableOpacity
         onPress={() =>
           navigation.navigate(ScreenName.sendMessage, {
-            name: "Nguyễn Đặng Hoàng Phúc",
+            name: `${firstName} ${lastName}`,
+            toUser: username,
+            image: image,
           })
         }
       >
@@ -32,7 +58,11 @@ export default function Message() {
           <Avatar
             size="lg"
             bg="green.500"
-            source={require("../../assets/images/happy.png")}
+            source={
+              image
+                ? { uri: BASE_URL_IMAGE + `${image}` }
+                : require("../../assets/images/happy.png")
+            }
           >
             Avatar
           </Avatar>
@@ -44,11 +74,11 @@ export default function Message() {
               justifyContent={"space-between"}
             >
               <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                Nguyen Hoang Phuc
+                {firstName + " " + lastName}
               </Text>
               <Text style={{ color: Colors.gray }}>11:11 PM</Text>
             </HStack>
-            <Text style={{ fontSize: 14 }}>Nguyen Dang Hoang Phuc</Text>
+            <Text style={{ fontSize: 14 }}>{lastMessage}</Text>
           </VStack>
         </HStack>
       </TouchableOpacity>
@@ -57,11 +87,17 @@ export default function Message() {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={list}
-        renderItem={({ item }) => renderItemMessage()}
-        keyExtractor={(item) => item}
-      />
+      {listUserMessage ? (
+        <FlatList
+          refreshing={refreshing}
+          onRefresh={handleRefreshUserMessage}
+          data={listUserMessage}
+          renderItem={({ item }) => renderItemMessage(item)}
+          keyExtractor={(item) => item}
+        />
+      ) : (
+        <></>
+      )}
     </View>
   );
 }

@@ -8,12 +8,23 @@ import Tabbar from "./modules/BottomTabNavigator";
 import EditProfile from "../views/Profile/EditProfile";
 import Message from "../views/Message";
 import SendMessage from "../views/Message/SendMessage";
+import {
+  getToken,
+  getUsername,
+  removeToken,
+  removeUserName,
+} from "../utils/storage";
 
 const Stack = createNativeStackNavigator();
 
-const getIsLogin = () => {
-  // custom logic
-  return false;
+const getIsLogin = async () => {
+  const token = await getToken();
+  const username = await getUsername();
+  if (token && username) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 export default function Navigation() {

@@ -8,7 +8,7 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   HStack,
   Avatar,
@@ -24,11 +24,52 @@ import { Colors } from "../../theme/colors";
 import { Images } from "../../theme/image";
 import { menu } from "./data";
 import { useNavigation } from "@react-navigation/core";
+import { useDispatch, useSelector } from "react-redux";
+import { BASE_URL_IMAGE } from "../../constants";
+import { getInfoApi } from "../../helper/modules/user";
+import { setInfoUser } from "../../redux/modules/user";
+import { getUsername } from "../../utils/storage";
+import { getListUserMessage } from "../../helper/modules/message";
+import { setListUserMessage } from "../../redux/modules/message";
 
 const { width, height } = Dimensions.get("window");
 
 export default function HomeView() {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const infoUser = useSelector((state) => state.user.infoUser);
+
+  useEffect(() => {
+    if (!infoUser) {
+      const handleGetInforUser = async () => {
+        const useName = await getUsername();
+        await getInfoApi(useName)
+          .then((res) => {
+            if (res.success) {
+              dispatch(setInfoUser(res.data));
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      };
+      const handleGetListUserMessage = async () => {
+        const useName = await getUsername();
+        await getListUserMessage(useName)
+          .then((res) => {
+            if (res.success) {
+              dispatch(setListUserMessage(res.data));
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      };
+      handleGetInforUser();
+      handleGetListUserMessage();
+    }
+  }, []);
 
   const renderHeaderHome = () => {
     return (
@@ -36,13 +77,17 @@ export default function HomeView() {
         <Avatar
           size="xl"
           bg="green.500"
-          source={require("../../assets/images/happy.png")}
+          source={
+            infoUser
+              ? { uri: BASE_URL_IMAGE + `${infoUser.image}` }
+              : require("../../assets/images/happy.png")
+          }
         >
           Avatar
         </Avatar>
         <VStack space={1}>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            Nguyen Dang Hoang Phuc
+            {infoUser ? `${infoUser.firstName} ${infoUser.lastName}` : ""}
           </Text>
           <HStack alignItems={"center"}>
             <Ionicons name="location-sharp" size={16} color="black" />
